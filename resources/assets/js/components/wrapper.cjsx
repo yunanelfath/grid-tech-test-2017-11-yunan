@@ -2,6 +2,7 @@ React = require('react')
 ReactDOM = require('react-dom')
 AppDispatcher = require('./../store/dispatcher.cjsx')
 GeneralStore = require('./../store/general.cjsx')
+SimpleGrid = require('./simple-grid.cjsx')
 
 { Component } = React
 
@@ -41,6 +42,6 @@ Wrapper = (GeneralStore, AppDispatcher) =>
     render: ->
       { general, mainApp } = @state
 
-      <div>test</div>
+      <SimpleGrid/>
 
 module.exports = Wrapper(GeneralStore, AppDispatcher)

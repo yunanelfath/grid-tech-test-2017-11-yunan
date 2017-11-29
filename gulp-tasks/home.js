@@ -39,19 +39,31 @@ elixir.extend('home_app', function(message){
         module: {
           loaders: [
             {
-              test: /\.s?css$/,
-              exclude: /node_modules/,
-              // loaders: ['style-loader','css-loader','sass-loader?modules=true']
+              test: /\.(png|jpe?g|gif|svg|woff|woff2|ttf|eot|ico)$/,
+              loader: 'file?name=[path]/[name].[ext]'
+            },
+            {
+              test: /\.css$/,
               use: [
-                {loader: 'style-loader'},
                 {
-                  loader: 'css-loader',
+                  loader: 'style-loader',
                   options: {
-                    modules: true,
-                    localIdentName: '___[hash:base64:5]',
                     minimize: true
                   }
                 },
+                {
+                  loader: 'css-loader',
+                  options: {
+                    minimize: true
+                  }
+                }
+              ]
+            },
+            {
+              test: /\.scss$/,
+              exclude: /node_modules/,
+              // loaders: ['style-loader','css-loader','sass-loader?modules=true']
+              use: [
                 {
                   loader: 'ruby-sass-loader',
                   options: {
@@ -60,7 +72,9 @@ elixir.extend('home_app', function(message){
                     localIdentName: '___[hash:base64:5]',
                     minimize: true
                   }
-                }
+                },
+                {loader: 'style-loader'},
+                {loader: 'css-loader'},
               ]
             },
             {
