@@ -11,7 +11,7 @@ class SimpleGrid extends Component
 
     # set default state picked from store
     @state = {
-      columnDefs: @createColumnDefs()
+      # columnDefs: @createColumnDefs()
       rowData: @createRowData()
     }
 
@@ -25,27 +25,23 @@ class SimpleGrid extends Component
     ]
 
   createRowData: ->
-    [
-      {make: "toyota",model: "celica",price: 35000}
-      {make:"ford",model: 'modeno',price: 3000}
-      {make: 'prose',model: 'modaklsdjf',price: 20000}
-    ]
+    items = []
+    for i in @props.rowData
+      items.push(i[Object.keys(i)[0]])
+    items
 
   render: ->
     containerStyle = {
-      height: 115
+      height: 500
     }
     <div style={containerStyle} className="ag-fresh">
         <h1>Simple ag-Grid React Example</h1>
         <AgGridReact
-          columnDefs={@state.columnDefs}
+          columnDefs={@props.columnDefs}
           enableSorting={true}
           enableFilter={true}
           pagination={true}
           rowData={@state.rowData}>
-          <AgGridColumn field="make"></AgGridColumn>
-          <AgGridColumn field="model"></AgGridColumn>
-          <AgGridColumn field="price"></AgGridColumn>
         </AgGridReact>
     </div>
 

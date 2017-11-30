@@ -12,13 +12,13 @@ AppDispatcher.register((action) ->
       GeneralStore.personalityNewQuestionItem()
     when 'personality_add_new_question_answer_item'
       GeneralStore.personalityNewAnswerItem(action.attributes)
-    when 'personality_change_item'
-      GeneralStore.personalityChangeItem(action.attributes)
+    when 'store_change_item'
+      GeneralStore.storeChangeItem(action.attributes)
     when 'personality_change_question_item_answer_item'
       GeneralStore.personalityChangeQuestionItem(action.attributes)
     when 'personality_remove_item'
       GeneralStore.personalityRemoveItem(action.attributes)
-    when 'personality_change'
-      GeneralStore.personalityChanged(action.attributes)
+    when 'store_change'
+      GeneralStore.storeChanged(action.attributes)
 )
 module.exports = AppDispatcher

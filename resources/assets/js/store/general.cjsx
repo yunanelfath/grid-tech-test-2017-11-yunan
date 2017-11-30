@@ -4,89 +4,36 @@ KeyGenerator = new KeyGenerator()
 _ = require('lodash')
 CHANGE_EVENT = 'change'
 CHANGE_ITEM_EVENT = 'change:item'
-newResultItem = () =>
-  {
-    id: KeyGenerator.getUniqueKey()
-    title: '',
-    description: '',
-    image: newImage()
-  }
-
-newQuestionItem = () =>
-  {
-    id: KeyGenerator.getUniqueKey()
-    title: ''
-    color: ''
-    questionType: 'text-inside'
-    answerType: 'text-inside'
-    image: newImage()
-    answerItems: []
-  }
-
-newAnswerTypeItem = () =>
-  {
-    id: KeyGenerator.getUniqueKey()
-    title: ''
-    color: ''
-    relatedResult: null
-    image: newImage()
-  }
-newImage = () =>
-  {
-    id: KeyGenerator.getUniqueKey()
-    url: null
-    uploading: false
-    cropping: false
-    progress: 0
-    messages: null
-    status: 200
-  }
 
 GeneralStore = _.assign({}, EventEmitter.prototype,
   mainApp:
-    baseUrl: 'http://localhost/playframe/public'
-    user:
-      token: ''
-  personality: {
-    title: ''
-    lead: ''
-    id: null
-    color: ''
-    image: newImage()
-    destroyableImages: []
-    resultItems: []
-    questionItems: []
-  }
+    token: 'a6ae86b93dcd4f5f9666067116bf9f55'
+    base: 'USD'
 
-  personalityNewQuestionItem: () ->
-    items = @personality.questionItems
-    newItem = newQuestionItem()
-    items.push(newItem)
+  store:
+    initialLoaded: false
+    rates: []
+    dates: []
+
+  storeChangeItem: (item)->
+    items = @store[item.itemType]
+    # returnItem = items
+    # debugger
+    # if Array.isArray(items)
+    returnItem = _.find(items, (e,idx) =>
+      if item.itemType == 'rates'
+        Object.keys(e)[0] == Object.keys(item.attributes)[0]
+      else
+        e[Object.keys(e)[1]] == item.attributes[Object.keys(item.attributes)[1]]
+    )
+    if returnItem
+      _.assign(returnItem[Object.keys(returnItem)[0]], item.attributes[Object.keys(item.attributes)[0]])
+    else
+      items.push(item.attributes)
     @emitChange()
 
-  personalityNewAnswerItem: (item) ->
-    items = @personality.questionItems
-    questionItem = _.find(items, (e) -> e.id == item.attributes.id)
-    newItem = newAnswerTypeItem()
-    questionItem.answerItems.push(newItem)
-    @emitChange()
-
-  personalityNewResultItem: () ->
-    items = @personality.resultItems
-    newItem = newResultItem()
-    items.push(newItem)
-    @emitChange()
-
-  personalityChangeItem: (item)->
-    items = @personality[item.itemType]
-    returnItem = items
-    if Array.isArray(items)
-      returnItem = _.find(items, (e) -> e.id == item.id)
-    _.assign(returnItem, item.attributes)
-    @emitChange()
-
-  personalityChangeQuestionItem: (item) ->
-    questionItems = @personality.questionItems
+  storeChangeChildrenItem: (item) ->
+    questionItems = @store.questionItems
     questionItem = _.find(questionItems, (e) -> e.id == item.questionItemId)
 
     answerItems = questionItem.answerItems
@@ -95,21 +42,16 @@ GeneralStore = _.assign({}, EventEmitter.prototype,
     _.assign(answerItem, item.attributes)
     @emitChange()
 
-  personalityRemoveItem: (item) ->
-    items = @personality[item.type]
+  storeRemoveItem: (item) ->
+    items = @store[item.type]
     item = _.remove(items, (e) -> e.id == item.id)
     @emitChange()
 
-  personalityChanged: (item) ->
-    personality = @personality
-    _.assign(personality, item.attributes)
+  storeChanged: (item) ->
+    store = @store
+    _.assign(store, item.attributes)
     @emitChange()
 
-
-  pushItems: (attributes) ->
-    items = @items
-    items.push(attributes.item)
-    @emitChange()
 
   emitChange: -> @emit(CHANGE_EVENT)
   addChangeListener: (callback) -> @addListener(CHANGE_EVENT, callback)

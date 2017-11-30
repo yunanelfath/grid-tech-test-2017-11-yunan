@@ -86,12 +86,6 @@ elixir.extend('home_app', function(message){
           ]
         },
         plugins: [
-          // new webpack.ProvidePlugin({
-          //     $: "jquery",
-          //     jQuery: "jquery",
-          //     _: 'underscore',
-          //     "window.jQuery": "jquery"
-          //   }),
           // new webpack.optimize.UglifyJsPlugin({
           //     compress: {
           //         warnings: false
