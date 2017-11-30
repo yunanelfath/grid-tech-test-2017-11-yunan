@@ -17,10 +17,13 @@ Exchange Rates Converter is simple money converter based on Fix rates API Provid
 - axios https://github.com/axios/axios
 
 # How To start
-- Production
-  open //your-root-path/dist/index.html
-- Development
-  cd your-root-path
-  npm install
-  gulp or gulp --production for production environment
-  open //your-root-path/home/index.html
+## Production
+open //your-root-path/dist/index.html
+## Development
+`cd your-root-path`
+
+`npm install`
+
+`gulp` or `gulp --production` for production environment
+
+open //your-root-path/home/index.html.
