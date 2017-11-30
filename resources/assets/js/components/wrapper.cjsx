@@ -24,12 +24,14 @@ Wrapper = (GeneralStore, AppDispatcher) =>
     componentDidMount: ->
       # add listener to connecting store
       @listener = GeneralStore.addChangeListener(@_onChange.bind(@))
+      dateAttributes = headerName: '', field: 'money'
+      @dispatchEvent({attributes: dateAttributes, itemType: 'dates'}, 'store_change_item')
       @onLoadCurrencyData()
 
     componentWillUnmount: ->
       @listener.remove()
 
-    onLoadCurrencyData: (startDate = "2017-01", lastDate="2017-10")->
+    onLoadCurrencyData: (startDate = "2017-06", lastDate="2017-10")->
       startDate = moment(startDate).endOf('month').format('YYYY-MM-DD')
       lastDate = moment(lastDate).endOf('month').format('YYYY-MM-DD')
       console.log startDate
@@ -37,21 +39,23 @@ Wrapper = (GeneralStore, AppDispatcher) =>
         method: 'get'
         url: 'https://openexchangerates.org/api/historical/'+startDate+'.json?base='+@state.mainApp.base+'&app_id='+@state.mainApp.token
       ).then((e) =>
-        if startDate == lastDate
-          @dispatchEvent(attributes: initialLoaded: true)
-          return false
-        dateAttributes = headerName: "tanggal "+e.data.timestamp, field: Number(e.data.timestamp).toString()
+        dateAttributes = headerName: moment(startDate).format('ll'), field: Number(e.data.timestamp).toString()
         @dispatchEvent({attributes: dateAttributes, itemType: 'dates'}, 'store_change_item')
         @onGenerateBaseCurrency(e.data)
         nextMonth = moment(startDate).add(1, 'months').endOf('month').format('YYYY-MM-DD')
+        if startDate == lastDate
+          console.log @state.store.rates
+          console.log @state.store.dates
+          @dispatchEvent(attributes: initialLoaded: true)
+          return false
         setTimeout(=>
           @onLoadCurrencyData(nextMonth)
-        ,900)
+        ,100)
       )
 
     onGenerateBaseCurrency: (data) ->
       results = []
-      Object.keys(data.rates).forEach((e)=>
+      Object.keys(data.rates).forEach((e, idx)=>
         ratesObject = {}
         key = data.timestamp
         ratesObject[key] = data.rates[e]
@@ -78,8 +82,8 @@ Wrapper = (GeneralStore, AppDispatcher) =>
     render: ->
       { store, mainApp } = @state
 
-      console.log store.rates
-      console.log store.dates
+      # console.log store.rates
+      # console.log store.dates
 
       <Loader loaded={store.initialLoaded}>
         <SimpleGrid rowData={store.rates} columnDefs={store.dates}/>

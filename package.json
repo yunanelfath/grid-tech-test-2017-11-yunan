@@ -9,6 +9,7 @@
   "author": "Yunan Kholilul Fatah",
   "license": "ISC",
   "devDependencies": {
+    "accounting": "^0.4.1",
     "ag-grid": "^14.2.0",
     "ag-grid-react": "^14.2.0",
     "axios": "^0.17.1",

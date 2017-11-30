@@ -1,0 +1,12 @@
+.ag-cell{
+  text-align: right !important;
+}
+.ag-cell:first-child{
+  text-align: left !important;
+}
+.loadedContent{
+  text-align: center !important;
+}
+.ag-fresh{
+  display: inline-block !important;
+}
