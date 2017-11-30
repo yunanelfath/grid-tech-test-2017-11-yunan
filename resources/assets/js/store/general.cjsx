@@ -8,12 +8,13 @@ CHANGE_ITEM_EVENT = 'change:item'
 GeneralStore = _.assign({}, EventEmitter.prototype,
   mainApp:
     token: 'a6ae86b93dcd4f5f9666067116bf9f55'
-    base: 'USD'
 
   store:
     initialLoaded: false
     rates: []
     dates: []
+    base: 'USD'
+    moneyInput: 1
 
   storeChangeItem: (item)->
     items = @store[item.itemType]

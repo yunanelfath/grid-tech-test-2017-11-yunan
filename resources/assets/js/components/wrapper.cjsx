@@ -35,9 +35,10 @@ Wrapper = (GeneralStore, AppDispatcher) =>
       startDate = moment(startDate).endOf('month').format('YYYY-MM-DD')
       lastDate = moment(lastDate).endOf('month').format('YYYY-MM-DD')
       console.log startDate
+      @dispatchEvent(attributes: initialLoaded: false)
       axios(
         method: 'get'
-        url: 'https://openexchangerates.org/api/historical/'+startDate+'.json?base='+@state.mainApp.base+'&app_id='+@state.mainApp.token
+        url: 'https://openexchangerates.org/api/historical/'+startDate+'.json?base='+@state.store.base+'&app_id='+@state.mainApp.token
       ).then((e) =>
         dateAttributes = headerName: moment(startDate).format('ll'), field: Number(e.data.timestamp).toString()
         @dispatchEvent({attributes: dateAttributes, itemType: 'dates'}, 'store_change_item')
@@ -48,9 +49,7 @@ Wrapper = (GeneralStore, AppDispatcher) =>
           console.log @state.store.dates
           @dispatchEvent(attributes: initialLoaded: true)
           return false
-        setTimeout(=>
-          @onLoadCurrencyData(nextMonth)
-        ,100)
+        @onLoadCurrencyData(nextMonth)
       )
 
     onGenerateBaseCurrency: (data) ->
@@ -58,7 +57,7 @@ Wrapper = (GeneralStore, AppDispatcher) =>
       Object.keys(data.rates).forEach((e, idx)=>
         ratesObject = {}
         key = data.timestamp
-        ratesObject[key] = data.rates[e]
+        ratesObject[key] = if e == @state.store.base then data.rates[e] else data.rates[e] * @state.store.moneyInput
         base = {}
         baseKey = e
         base[baseKey] = ratesObject
@@ -79,13 +78,39 @@ Wrapper = (GeneralStore, AppDispatcher) =>
         attributes: attributes
       )
 
+    onBlurMoney: (event) ->
+      console.log event.target.value
+      @dispatchEvent(attributes: {moneyInput: Number(event.target.value)})
+      @onLoadCurrencyData()
+
+    onChangeMoney: (event) ->
+      @dispatchEvent(attributes: {moneyInput: event.target.value})
+
+    onSelectChange: (event) ->
+      @dispatchEvent(attributes: {base: event.target.value})
+      @onLoadCurrencyData()
+
     render: ->
       { store, mainApp } = @state
 
-      # console.log store.rates
-      # console.log store.dates
+      options = [
+        'US','IDR','SGD'
+      ]
+
+      optionRowItem = (item, idx) =>
+        <option key={idx} value={item}>{item}</option>
 
       <Loader loaded={store.initialLoaded}>
+        <h1>Currency Converter</h1>
+        <div>
+          <input type="text" value={store.moneyInput} onBlur={@onBlurMoney.bind(@)} onChange={@onChangeMoney.bind(@)}/>
+          <select onChange={@onSelectChange.bind(@)} value={store.base}>
+            {
+              options.map(optionRowItem)
+            }
+          </select>
+        </div>
+        <br/>
         <SimpleGrid rowData={store.rates} columnDefs={store.dates}/>
       </Loader>
 

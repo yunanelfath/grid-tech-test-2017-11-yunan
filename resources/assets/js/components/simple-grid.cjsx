@@ -38,8 +38,7 @@ class SimpleGrid extends Component
       height: 500
       width: 900
     }
-    <div style={containerStyle} className="ag-fresh">
-        <h1>Currency Converter</h1>
+    <div style={containerStyle} className="ag-blue">
         <AgGridReact
           columnDefs={@props.columnDefs}
           enableSorting={true}

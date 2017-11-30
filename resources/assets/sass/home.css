@@ -1,12 +1,9 @@
 .ag-cell{
   text-align: right !important;
 }
-.ag-cell:first-child{
-  text-align: left !important;
-}
 .loadedContent{
   text-align: center !important;
 }
-.ag-fresh{
+.ag-fresh,.ag-blue{
   display: inline-block !important;
 }
