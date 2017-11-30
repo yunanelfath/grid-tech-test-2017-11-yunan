@@ -40,7 +40,7 @@ Wrapper = (GeneralStore, AppDispatcher) =>
       @dispatchEvent(attributes: initialLoaded: false)
       axios(
         method: 'get'
-        url: 'https://openexchangerates.org/api/historical/'+startDate+'.json?base='+@state.store.base+'&app_id='+@state.mainApp.token
+        url: 'https://openexchangerates.org/api/historical/'+startDate+'.json?symbols=INR,USD,EUR,GBP&base='+@state.store.base+'&app_id='+@state.mainApp.token
       ).then((e) =>
         dateAttributes = headerName: moment(startDate).format('ll'), field: Number(e.data.timestamp).toString()
         @dispatchEvent({attributes: dateAttributes, itemType: 'dates'}, 'store_change_item')
@@ -96,7 +96,7 @@ Wrapper = (GeneralStore, AppDispatcher) =>
       { store, mainApp } = @state
 
       options = [
-        'IDR','US','EUR','SGD','AUD'
+        'INR','USD','EUR','GBP'
       ]
 
       optionRowItem = (item, idx) =>
