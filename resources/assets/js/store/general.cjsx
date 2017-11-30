@@ -33,21 +33,6 @@ GeneralStore = _.assign({}, EventEmitter.prototype,
       items.push(item.attributes)
     @emitChange()
 
-  storeChangeChildrenItem: (item) ->
-    questionItems = @store.questionItems
-    questionItem = _.find(questionItems, (e) -> e.id == item.questionItemId)
-
-    answerItems = questionItem.answerItems
-    answerItem = _.find(answerItems, (e) -> e.id == item.answerItemId)
-
-    _.assign(answerItem, item.attributes)
-    @emitChange()
-
-  storeRemoveItem: (item) ->
-    items = @store[item.type]
-    item = _.remove(items, (e) -> e.id == item.id)
-    @emitChange()
-
   storeChanged: (item) ->
     store = @store
     _.assign(store, item.attributes)

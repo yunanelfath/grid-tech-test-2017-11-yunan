@@ -24,7 +24,8 @@ Wrapper = (GeneralStore, AppDispatcher) =>
     componentDidMount: ->
       # add listener to connecting store
       @listener = GeneralStore.addChangeListener(@_onChange.bind(@))
-      dateAttributes = headerName: '', field: 'money'
+      # initial load table
+      dateAttributes = headerName: 'Symbols', field: 'money'
       @dispatchEvent({attributes: dateAttributes, itemType: 'dates'}, 'store_change_item')
       @onLoadCurrencyData()
 
@@ -35,6 +36,7 @@ Wrapper = (GeneralStore, AppDispatcher) =>
       startDate = moment(startDate).endOf('month').format('YYYY-MM-DD')
       lastDate = moment(lastDate).endOf('month').format('YYYY-MM-DD')
       console.log startDate
+      #dispatch loader for each request
       @dispatchEvent(attributes: initialLoaded: false)
       axios(
         method: 'get'
@@ -57,7 +59,7 @@ Wrapper = (GeneralStore, AppDispatcher) =>
       Object.keys(data.rates).forEach((e, idx)=>
         ratesObject = {}
         key = data.timestamp
-        ratesObject[key] = if e == @state.store.base then data.rates[e] else data.rates[e] * @state.store.moneyInput
+        ratesObject[key] = if e == @state.store.base then @state.store.moneyInput else data.rates[e] * @state.store.moneyInput
         base = {}
         baseKey = e
         base[baseKey] = ratesObject
@@ -94,14 +96,14 @@ Wrapper = (GeneralStore, AppDispatcher) =>
       { store, mainApp } = @state
 
       options = [
-        'US','IDR','SGD'
+        'IDR','US','EUR','SGD','AUD'
       ]
 
       optionRowItem = (item, idx) =>
         <option key={idx} value={item}>{item}</option>
 
       <Loader loaded={store.initialLoaded}>
-        <h1>Currency Converter</h1>
+        <h1>Exchange Rates Converter</h1>
         <div>
           <input type="text" value={store.moneyInput} onBlur={@onBlurMoney.bind(@)} onChange={@onChangeMoney.bind(@)}/>
           <select onChange={@onSelectChange.bind(@)} value={store.base}>

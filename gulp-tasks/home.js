@@ -20,8 +20,7 @@ var assets = {
     output:{
       jsPath: 'public/js',
       jsDesktop: 'home.js',
-      cssPath: 'public/css',
-      cssDesktop: 'home.css'
+      jsProductionPath: 'dist'
     },
     desktop: {
       js: 'resources/assets/js/components/index.cjsx',
@@ -86,16 +85,16 @@ elixir.extend('home_app', function(message){
           ]
         },
         plugins: [
-          // new webpack.optimize.UglifyJsPlugin({
-          //     compress: {
-          //         warnings: false
-          //     },
-          //     comments: false,
-          //     sourceMap: true
-          // })
+          new webpack.optimize.UglifyJsPlugin({
+              compress: {
+                  warnings: false
+              },
+              comments: false,
+              sourceMap: true
+          })
         ],
       }))
-      .pipe(gulp.dest(assets.input.output.jsPath));
+      .pipe(gulp.dest(gutil.env.production !== undefined ? assets.input.output.jsProductionPath : assets.input.output.jsPath));
   }).watch(['resources/assets/**/*.js', 'resources/assets/**/*.cjsx', 'resources/assets/**/*.scss']);
 
 })
