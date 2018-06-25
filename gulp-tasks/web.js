@@ -20,17 +20,18 @@ var assets = {
   input: {
     output:{
       jsPath: 'public/js',
-      jsDesktop: 'home.js',
+      jsDesktop: 'web.js',
       jsProductionPath: 'dist'
     },
     desktop: {
-      js: 'resources/assets/js/components/index.cjsx',
+      js: 'resources/assets/js/components/web/index.cjsx',
     }
   }
 }
 
-elixir.extend('home_app', function(message){
-  new Task('home-scripts',function(){
+
+elixir.extend('web_app', function(message){
+  new Task('web-scripts',function(){
     return gulp.src(assets.input.desktop.js)
       .pipe(webpackStream({
         output: {
