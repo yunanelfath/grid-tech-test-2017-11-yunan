@@ -42,6 +42,6 @@ elixir.extend('web_app', function(message){
         },
         plugins: env.environment.plugins,
       })).on('error',console.log)
-      .pipe(gulp.dest(assets.input.output.jsPath));
+      .pipe(gulp.dest(gutil.env.production !== undefined && gutil.env.production ? assets.input.output.jsProductionPath : assets.input.output.jsPath));
   }).watch(['resources/assets/**/*.cjsx','resources/assets/modules/**/*.scss']);
 })
