@@ -20,9 +20,8 @@ GeneralStore = _.assign({}, EventEmitter.prototype,
     ]
     urls:
       userInfo:
-        method: 'PUT'
+        method: 'GET'
         url: "#{mainApiUrl}/user"
-        contentType: 'application/json'
       transferInfo:
         method: 'GET'
         url: "#{mainApiUrl}/user/transfer_info?disable_va=false"

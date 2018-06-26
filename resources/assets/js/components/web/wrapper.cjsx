@@ -25,32 +25,25 @@ class Wrapper extends Component
 		{ form } = @state
 		# debugger
 		setTimeout((e) =>
-			@onChangeItem('change_item',form, null, 'initialLoaded', true)
-			@onChangeItem('change_item',form, null, 'userInfo', JSON.parse(form.userInfo))
+			$.ajax(
+				type: form.urls.userInfo.method
+				beforeSend: (xhr, e) =>
+					xhr.setRequestHeader('X-XFERS-USER-API-KEY', "#{form?.token}")
+				url: form.urls.userInfo.url
+				crossDomain: true
+				xhrFields: {withCredentials: true}
+				cache: false
+				async: true
+				contentType: 'application/json'
+				dataType: 'json'
+				success: (data) =>
+					@onChangeItem('change_item',form, null, 'initialLoaded', true)
+					console.log data
+					@onChangeItem('change_item',form, null, 'userInfo', data)
+				error: (e, xhr, i) =>
+					debugger
+			)
 		,1500)
-
-		$.ajax(
-			type: form.urls.userInfo.method
-			beforeSend: (xhr, e) =>
-				xhr.setRequestHeader('X-XFERS-USER-API-KEY', "#{form?.token}")
-				xhr.setRequestHeader('Access-Control-Allow-Origin', "origin")
-				xhr.setRequestHeader('Access-Control-Allow-Credentials', 'true')
-			url: form.urls.userInfo.url
-			crossDomain: true
-			xhrFields: {withCredentials: true}
-			cache: false
-			async: true
-			contentType: 'application/json'
-			dataType: 'json'
-			success: (data) =>
-				console.log data
-			error: (e, xhr, i) =>
-				console.log e
-		).done((e) =>
-			console.log e
-		).fail((e) =>
-			console.log e
-		)
 
 	onChangeTab: (item) =>
 		{ form } = @state
