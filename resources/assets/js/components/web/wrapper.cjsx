@@ -21,28 +21,45 @@ class Wrapper extends Component
 		@listener = GeneralStore.addChangeListener(@_onChange.bind(@)) # this/@ should bind manuallyy
 		@onInitialLoad()
 
+	ajaxProcess: (url, method, callback, data) =>
+		{ form } = @state
+		$.ajax(
+			type: method
+			beforeSend: (xhr, e) =>
+				xhr.setRequestHeader('X-XFERS-USER-API-KEY', "#{form?.token}")
+				@onChangeItem('change_item',form, null, 'initialLoaded', false)
+			url: url
+			crossDomain: true
+			xhrFields: {withCredentials: true}
+			cache: false
+			data: if data != null then JSON.stringify(data) else null
+			async: true
+			contentType: 'application/json'
+			dataType: 'json'
+			success: (data) =>
+				@onChangeItem('change_item',form, null, 'initialLoaded', true)
+				if url.match(/transfer_info/i)
+					@onChangeItem('change_item',form, null, 'transferInfo', data)
+				else if url.match(/charges/i)
+					debugger
+					@onChangeItem('change_item',form, null, 'chargesInfo', data)
+				else
+					console.log data
+					@onChangeItem('change_item',form, null, 'userInfo', data)
+			error: (e, xhr, i) =>
+				debugger
+				alert(e.error)
+		).done((e) =>
+			if typeof callback == 'function'
+				callback()
+		)
+
 	onInitialLoad: ->
 		{ form } = @state
 		# debugger
+
 		setTimeout((e) =>
-			$.ajax(
-				type: form.urls.userInfo.method
-				beforeSend: (xhr, e) =>
-					xhr.setRequestHeader('X-XFERS-USER-API-KEY', "#{form?.token}")
-				url: form.urls.userInfo.url
-				crossDomain: true
-				xhrFields: {withCredentials: true}
-				cache: false
-				async: true
-				contentType: 'application/json'
-				dataType: 'json'
-				success: (data) =>
-					@onChangeItem('change_item',form, null, 'initialLoaded', true)
-					console.log data
-					@onChangeItem('change_item',form, null, 'userInfo', data)
-				error: (e, xhr, i) =>
-					debugger
-			)
+			@ajaxProcess(form.urls.userInfo.url, form.urls.userInfo.method, @ajaxProcess(form.urls.transferInfo.url, form.transferInfo.method))
 		,1500)
 
 	onChangeTab: (item) =>
@@ -55,11 +72,13 @@ class Wrapper extends Component
 
 	onAddLists: (item, page) =>
 		{ form } = @state
-		@onChangeItem('change_item',form, null, 'initialLoaded', false)
-		setTimeout((e) =>
-			@onChangeItem('change_item',form, null, 'initialLoaded', true)
-			@onChangeItem('change_item',form, null, 'activePage', page)
-		,1500)
+		@onChangeTab(page)
+		postData =
+			debit_only: true
+			amount: item?.amount
+			currency: 'IDR'
+			order_id: '3433'
+		@ajaxProcess(form.urls.createCharges.url, form.urls.createCharges.method, null, postData)
 
 
 	componentWillUnmount: ->
@@ -99,7 +118,7 @@ class Wrapper extends Component
 				<Loader loaded={form?.initialLoaded}>
 					<a href="#" onClick={@onChangeTab.bind(@, 'default')}>default</a><br/>
 					<a href="#" onClick={@onChangeTab.bind(@, 'lists')}>my shop</a><br/>
-					<a href="/tech-test/dist/">Exchange Rates converter</a>
+					balance: {Number(form?.userInfo?.available_balance).toFixed(2)}
 					<hr/>
 					{
 						if form?.activePage == 'default'
@@ -108,11 +127,11 @@ class Wrapper extends Component
 								<div>you have success</div>
 								<div>you can top up</div>
 								<div>
-									<span>Bank Name: {form?.userInfo?.nationality}</span>
+									<span>Bank Name: {form?.transferInfo?.bank_name_full}</span>
 									<br/>
-									<span>Account Number: {form?.userInfo?.nationality}</span>
+									<span>Account Number: {form?.transferInfo?.bank_account_no}</span>
 									<br/>
-									<span>Unique ID: {form?.userInfo?.nationality}</span>
+									<span>Unique ID: {form?.transferInfo?.unique_id}</span>
 									<br/>
 								</div>
 							</div>
